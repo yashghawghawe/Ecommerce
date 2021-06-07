@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import com.yash.shopping.dto.ProductDTO;
 import com.yash.shopping.dto.ProductRequestDTO;
 import com.yash.shopping.dto.ProductResponseDTO;
-import com.yash.shopping.exception.CategoryNotFoundException;
 import com.yash.shopping.exception.ProductNotFoundException;
 import com.yash.shopping.service.ProductService;
 
@@ -46,11 +45,13 @@ public class ProductControllerTest {
 		productRequestDTO.setProductName("redmi note 9");
 
 		List<ProductDTO> productDTOs = new ArrayList<>();
-		ProductDTO productDTO = new ProductDTO();
-		productDTO.setProductName("redmi note 9");
-		productDTO.setAmount(10000);
-		productDTO.setQuantity(100);
-		productDTO.setProductId(1);
+		ProductDTO productDTO = new ProductDTO(proDTO -> {
+			proDTO.setProductName("redmi note 9");
+			proDTO.setAmount(10000);
+			proDTO.setQuantity(100);
+			proDTO.setProductId(1);
+		});
+
 		productDTOs.add(productDTO);
 
 		productResponseDTO = new ProductResponseDTO();
@@ -63,7 +64,7 @@ public class ProductControllerTest {
 	 */
 	@Test
 	@DisplayName("Positive Scenario: Products Fetched Successfully")
-	public void searchProductTest() throws ProductNotFoundException, CategoryNotFoundException {
+	public void searchProductTest() throws ProductNotFoundException {
 		// given
 		when(productService.searchProduct(productRequestDTO)).thenReturn(productResponseDTO);
 
@@ -81,11 +82,11 @@ public class ProductControllerTest {
 	 */
 	@Test
 	@DisplayName("Negative Scenario: Product not found")
-	public void searchProductFailedTest() throws ProductNotFoundException, CategoryNotFoundException {
+	public void searchProductFailedTest() throws ProductNotFoundException {
 		// given
 		when(productService.searchProduct(productRequestDTO)).thenThrow(ProductNotFoundException.class);
 
-		//outcome
+		// outcome
 		Assertions.assertThrows(ProductNotFoundException.class,
 				() -> productController.searchProduct(productRequestDTO));
 	}

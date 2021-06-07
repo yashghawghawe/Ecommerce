@@ -41,18 +41,21 @@ public class OrderHistoryServiceImplTest {
 	@BeforeAll
 	public static void setUp() {
 		orders = new ArrayList<>();
-		Order order = new Order();
-		order.setUserId(1);
-		order.setTotalprice(10000);
-		order.setDateTime(LocalDateTime.now());
+		Order order = new Order(o -> {
+			o.setUserId(1);
+			o.setTotalprice(10000);
+			o.setDateTime(LocalDateTime.now());
+		});
 
 		orderDetailsList = new ArrayList<>();
-		OrderDetails orderDetails = new OrderDetails();
-		orderDetails.setPrice(10000);
-		orderDetails.setProductname("redmi note 9");
-		orderDetails.setQuantity(1);
-		orderDetails.setUserId(1);
-		orderDetails.setProduct(new Product());
+		OrderDetails orderDetails = new OrderDetails(orderDetail -> {
+			orderDetail.setPrice(10000);
+			orderDetail.setProductname("redmi note 9");
+			orderDetail.setQuantity(1);
+			orderDetail.setUserId(1);
+			orderDetail.setProduct(new Product());
+		});
+
 		orderDetailsList.add(orderDetails);
 		order.setOrderDetails(orderDetailsList);
 

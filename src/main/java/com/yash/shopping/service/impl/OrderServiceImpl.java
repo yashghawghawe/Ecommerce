@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -52,8 +52,8 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private BankClient bankClient;
 
-	//@Value("${fastkart.accountNo}")
-	private String beneficiaryAccountNumber="11223344";
+	// @Value("${fastkart.accountNo}")
+	private String beneficiaryAccountNumber = "11223344";
 
 	/**
 	 * @param orderRequestDTO
@@ -65,13 +65,12 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public OrderResponseDTO orderProducts(@Valid OrderRequestDTO orderRequestDTO)
 			throws TransactionFailedException, ProductNotFoundException, InsufficientBalanceException {
-		double totalamount = 0;
 		Order order = new Order();
-		List<OrderDetails> orderDetailsList = new ArrayList<OrderDetails>();
+		List<OrderDetails> orderDetailsList = new ArrayList<>();
 		List<OrderProductRequestDTO> orderProductRequestDTOs = orderRequestDTO.getOrderProductRequestDTO();
 		order.setUserId(Long.parseLong(orderRequestDTO.getUserId()));
 		order.setDateTime(LocalDateTime.now());
-		totalamount = saveOrderDetails(orderRequestDTO, totalamount, orderDetailsList, orderProductRequestDTOs);
+		double totalamount = saveOrderDetails(orderRequestDTO, orderDetailsList, orderProductRequestDTOs);
 
 		try {
 			bankClient.transferFund(
@@ -86,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
 			}
 
 		}
-
+		
 		order.setTotalprice(totalamount);
 		order.setOrderDetails(orderDetailsList);
 		Order savedOrder = orderRepository.save(order);
@@ -102,11 +101,10 @@ public class OrderServiceImpl implements OrderService {
 	 * @return double
 	 * @throws ProductNotFoundException
 	 */
-	private double saveOrderDetails(OrderRequestDTO orderRequestDTO, double totalamount,
-			List<OrderDetails> orderDetailsList, List<OrderProductRequestDTO> orderProductRequestDTOs)
-			throws ProductNotFoundException {
+	private double saveOrderDetails(OrderRequestDTO orderRequestDTO, List<OrderDetails> orderDetailsList,
+			List<OrderProductRequestDTO> orderProductRequestDTOs) throws ProductNotFoundException {
+		double amount = 0;
 		for (OrderProductRequestDTO orderProductRequestDTO : orderProductRequestDTOs) {
-			OrderDetails orderDetails = new OrderDetails();
 			Optional<Product> products = productRepository
 					.findById(Long.parseLong(orderProductRequestDTO.getProductId()));
 			if (ObjectUtils.isEmpty(products)) {
@@ -117,16 +115,18 @@ public class OrderServiceImpl implements OrderService {
 				double price = product.getAmount() * Double.parseDouble(orderProductRequestDTO.getQuantity());
 				int updatedQuantity = product.getQuantity() - Integer.parseInt(orderProductRequestDTO.getQuantity());
 				productRepository.updateQuantity(updatedQuantity, product.getProductId());
-				totalamount = totalamount + price;
-				orderDetails.setPrice(price);
-				orderDetails.setProduct(product);
-				orderDetails.setProductname(product.getProductName());
-				orderDetails.setQuantity(Integer.parseInt(orderProductRequestDTO.getQuantity()));
-				orderDetails.setUserId(Long.parseLong(orderRequestDTO.getUserId()));
+				amount = amount + price;
+				OrderDetails orderDetails = new OrderDetails(orderDetail -> {
+					orderDetail.setPrice(price);
+					orderDetail.setProduct(product);
+					orderDetail.setProductname(product.getProductName());
+					orderDetail.setQuantity(Integer.parseInt(orderProductRequestDTO.getQuantity()));
+					orderDetail.setUserId(Long.parseLong(orderRequestDTO.getUserId()));
+				});
 				orderDetailsList.add(orderDetails);
 			}
 		}
-		return totalamount;
+		return amount;
 	}
 
 	/**
@@ -141,12 +141,10 @@ public class OrderServiceImpl implements OrderService {
 		}
 
 		List<OrderDetails> orderDetails = savedOrders.getOrderDetails();
-		List<OrderDetailsDTO> orderDetailsDTOs = new ArrayList<>();
-		orderDetails.forEach(orderDetail -> {
-			OrderDetailsDTO orderDetailsDTO = new OrderDetailsDTO();
-			BeanUtils.copyProperties(orderDetail, orderDetailsDTO);
-			orderDetailsDTOs.add(orderDetailsDTO);
-		});
+
+		List<OrderDetailsDTO> orderDetailsDTOs = orderDetails.parallelStream().map(OrderDetailsDTO::new)
+				.collect(Collectors.toList());
+
 		return new OrderResponseDTO("Order has been booked successfully", savedOrder.getOrderId(),
 				savedOrder.getUserId(), savedOrder.getDateTime(), savedOrders.getTotalprice(), orderDetailsDTOs);
 	}

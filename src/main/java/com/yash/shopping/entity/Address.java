@@ -1,5 +1,7 @@
 package com.yash.shopping.entity;
 
+import java.util.function.Consumer;
+
 import javax.persistence.Embeddable;
 
 import lombok.AllArgsConstructor;
@@ -24,6 +26,10 @@ public class Address {
 	private String state;
 	private String town;
 	private String pincode;
+	
+	public Address(Consumer<Address> builder) {
+		builder.accept(this);
+	}
 
 	
 }

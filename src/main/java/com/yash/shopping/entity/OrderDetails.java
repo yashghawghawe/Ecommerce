@@ -1,5 +1,7 @@
 package com.yash.shopping.entity;
 
+import java.util.function.Consumer;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,5 +35,9 @@ public class OrderDetails {
 	private double price;
 	private String productname;
 	private int quantity;
+
+	public OrderDetails(Consumer<OrderDetails> builder) {
+		builder.accept(this);
+	}
 
 }

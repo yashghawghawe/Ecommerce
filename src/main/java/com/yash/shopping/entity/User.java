@@ -1,6 +1,7 @@
 package com.yash.shopping.entity;
 
 import java.math.BigDecimal;
+import java.util.function.Consumer;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -8,7 +9,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -20,6 +23,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
 	@Id
@@ -32,5 +37,9 @@ public class User {
 	private String contactNo;
 	@Embedded
 	private Address address;
+
+	public User(Consumer<User> builder) {
+		builder.accept(this);
+	}
 
 }

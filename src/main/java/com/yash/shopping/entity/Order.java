@@ -2,6 +2,7 @@ package com.yash.shopping.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -40,5 +41,9 @@ public class Order {
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "order_id")
 	private List<OrderDetails> orderDetails;
+
+	public Order(Consumer<Order> builder) {
+		builder.accept(this);
+	}
 
 }
