@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.yash.shopping.dto.ProductRequestDTO;
 import com.yash.shopping.dto.ProductResponseDTO;
-import com.yash.shopping.exception.CategoryNotFoundException;
 import com.yash.shopping.exception.ProductNotFoundException;
 import com.yash.shopping.service.ProductService;
 
@@ -26,7 +25,7 @@ import com.yash.shopping.service.ProductService;
 public class ProductController {
 
 	private final Logger logger = LoggerFactory.getLogger(LoginController.class);
-	
+
 	@Autowired
 	private ProductService productService;
 
@@ -37,9 +36,8 @@ public class ProductController {
 	 * @throws CategoryNotFoundException
 	 */
 	@PostMapping
-	public ResponseEntity<ProductResponseDTO> searchProduct(
-			@RequestBody @Valid ProductRequestDTO productRequestDTO)
-			throws ProductNotFoundException, CategoryNotFoundException {
+	public ResponseEntity<ProductResponseDTO> searchProduct(@RequestBody @Valid ProductRequestDTO productRequestDTO)
+			throws ProductNotFoundException {
 		ProductResponseDTO productResponseDTO = productService.searchProduct(productRequestDTO);
 		logger.info("products fetched successfully!");
 		return ResponseEntity.ok(productResponseDTO);

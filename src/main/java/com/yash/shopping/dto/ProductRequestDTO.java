@@ -1,5 +1,7 @@
 package com.yash.shopping.dto;
 
+import java.util.function.Consumer;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
@@ -23,5 +25,9 @@ public class ProductRequestDTO {
 
 	@Pattern(regexp = "^[a-zA-Z]*$", message = "Enter Alphabets only")
 	private String categoryName;
+	
+	public ProductRequestDTO(Consumer<ProductRequestDTO> builder) {
+		builder.accept(this);
+	}
 
 }

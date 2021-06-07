@@ -17,9 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.yash.shopping.dto.ProductDTO;
 import com.yash.shopping.dto.ProductRequestDTO;
 import com.yash.shopping.dto.ProductResponseDTO;
-import com.yash.shopping.entity.Category;
 import com.yash.shopping.entity.Product;
-import com.yash.shopping.exception.CategoryNotFoundException;
 import com.yash.shopping.exception.ProductNotFoundException;
 import com.yash.shopping.repository.CategoryRepository;
 import com.yash.shopping.repository.ProductRepository;
@@ -47,25 +45,27 @@ public class ProductServiceImplTest {
 	@BeforeAll
 	public static void setUp() {
 		products = new ArrayList<>();
-		Product product = new Product();
-		product.setProductName("redmi note 9");
-		product.setAmount(10000);
-		product.setQuantity(100);
-		Category category = new Category();
-		category.setCategoryName("mobiles");
-		product.setCategoryId(1);
+		Product product = new Product(pro -> {
+			pro.setProductName("redmi note 9");
+			pro.setAmount(10000);
+			pro.setQuantity(100);
+			pro.setCategoryId(1);
+		});
+
 		products.add(product);
 
-		productRequestDTO = new ProductRequestDTO();
-		productRequestDTO.setCategoryName("Mobiles");
-		productRequestDTO.setProductName("redmi note 9");
+		productRequestDTO = new ProductRequestDTO(productRequestDTO -> {
+			productRequestDTO.setCategoryName("Mobiles");
+			productRequestDTO.setProductName("redmi note 9");
+		});
 
 		List<ProductDTO> productDTOs = new ArrayList<>();
-		ProductDTO productDTO = new ProductDTO();
-		productDTO.setProductName("redmi note 9");
-		productDTO.setAmount(10000);
-		productDTO.setQuantity(100);
-		productDTO.setProductId(1);
+		ProductDTO productDTO = new ProductDTO(proDTO -> {
+			proDTO.setProductName("redmi note 9");
+			proDTO.setAmount(10000);
+			proDTO.setQuantity(100);
+			proDTO.setProductId(1);
+		});
 		productDTOs.add(productDTO);
 
 		productResponseDTO = new ProductResponseDTO();
@@ -79,7 +79,7 @@ public class ProductServiceImplTest {
 	 */
 	@Test
 	@DisplayName("Postive Scenario : Fetching Products")
-	public void searchProductTest() throws ProductNotFoundException, CategoryNotFoundException {
+	public void searchProductTest() throws ProductNotFoundException {
 		// given
 		when(productRepository.findByProductNameContains("redmi note 9")).thenReturn(products);
 
@@ -91,9 +91,13 @@ public class ProductServiceImplTest {
 		Assertions.assertNotNull(productResponseDTO);
 	}
 
+	/**
+	 * @throws ProductNotFoundException
+	 * @throws CategoryNotFoundException
+	 */
 	@Test
 	@DisplayName("negative Scenario : Fetching Products")
-	public void searchProductFailedTest() throws ProductNotFoundException, CategoryNotFoundException {
+	public void searchProductFailedTest() throws ProductNotFoundException {
 		// given
 		when(productRepository.findByProductNameContains("redmi note 9")).thenReturn(null);
 		when(categoryRepository.findByCategoryName("mobile")).thenReturn(null);

@@ -1,5 +1,7 @@
 package com.yash.shopping.dto;
 
+import java.util.function.Consumer;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -26,5 +28,9 @@ public class OrderProductRequestDTO {
 	@Size(min = 1, max = 3)
 	@Pattern(regexp = "^[0-9]*$", message = "must be a number")
 	private String quantity;
+
+	public OrderProductRequestDTO(Consumer<OrderProductRequestDTO> builder) {
+		builder.accept(this);
+	}
 
 }

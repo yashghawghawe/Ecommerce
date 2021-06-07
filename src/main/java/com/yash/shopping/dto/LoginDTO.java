@@ -1,5 +1,7 @@
 package com.yash.shopping.dto;
 
+import java.util.function.Consumer;
+
 import javax.validation.constraints.NotEmpty;
 
 import lombok.AllArgsConstructor;
@@ -21,5 +23,9 @@ public class LoginDTO {
 	private String username;
 	@NotEmpty(message = "Password cannot be empty")
 	private String password;
+
+	public LoginDTO(Consumer<LoginDTO> builder) {
+		builder.accept(this);
+	}
 
 }

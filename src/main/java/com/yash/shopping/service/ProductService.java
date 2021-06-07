@@ -4,7 +4,6 @@ import javax.validation.Valid;
 
 import com.yash.shopping.dto.ProductRequestDTO;
 import com.yash.shopping.dto.ProductResponseDTO;
-import com.yash.shopping.exception.CategoryNotFoundException;
 import com.yash.shopping.exception.ProductNotFoundException;
 
 /**
@@ -19,7 +18,6 @@ public interface ProductService {
 	 * @throws ProductNotFoundException
 	 * @throws CategoryNotFoundException
 	 */
-	ProductResponseDTO searchProduct(@Valid ProductRequestDTO productRequestDTO)
-			throws ProductNotFoundException, CategoryNotFoundException;
+	ProductResponseDTO searchProduct(@Valid ProductRequestDTO productRequestDTO) throws ProductNotFoundException;
 
 }

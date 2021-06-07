@@ -1,5 +1,7 @@
 package com.yash.shopping.entity;
 
+import java.util.function.Consumer;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,5 +27,9 @@ public class Category {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long categoryId;
 	private String categoryName;
+	
+	public Category(Consumer<Category> builder) {
+		builder.accept(this);
+	}
 
 }

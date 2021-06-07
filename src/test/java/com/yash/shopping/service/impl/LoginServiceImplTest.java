@@ -34,29 +34,32 @@ public class LoginServiceImplTest {
 
 	@BeforeAll
 	public static void setUp() {
-		loginDTO = new LoginDTO();
-		loginDTO.setPassword("yash");
-		loginDTO.setUsername("yash ghawghawe");
+		loginDTO = new LoginDTO(loginDTO -> {
+			loginDTO.setPassword("yash");
+			loginDTO.setUsername("yash ghawghawe");
+		});
 
-		address = new Address();
-		address.setTown("RatanNagar");
-		address.setState("Maharashtra");
-		address.setCity("Nagpur");
-		address.setPincode("440009");
+		address = new Address(address -> {
+			address.setTown("RatanNagar");
+			address.setState("Maharashtra");
+			address.setCity("Nagpur");
+			address.setPincode("440009");
+		});
 
-		user = new User();
-		user.setUsername("yash ghawghawe");
-		user.setPassword("yash");
-		user.setAge(new BigDecimal("23"));
-		user.setContactNo("8983568315");
-		user.setEmail("yash@gmail.com");
-		user.setAddress(address);
+		user = new User(user -> {
+			user.setUsername("yash ghawghawe");
+			user.setPassword("yash");
+			user.setAge(new BigDecimal("23"));
+			user.setContactNo("8983568315");
+			user.setEmail("yash@gmail.com");
+			user.setAddress(address);
+		});
 
 	}
 
 	@Test
 	@DisplayName("Positive Scenario: User exists")
-	public void testAuthenticate() throws org.apache.http.auth.InvalidCredentialsException {
+	public void testAuthenticate() throws InvalidCredentialsException {
 		// given
 		when(userRepository.findByUsernameAndPassword("yash ghawghawe", "yash")).thenReturn(user);
 
@@ -72,8 +75,7 @@ public class LoginServiceImplTest {
 	@DisplayName("Negative Scenario: User doesn`t exists")
 	public void testAuthenticateFail() throws InvalidCredentialsException {
 		// given
-		when(userRepository.findByUsernameAndPassword("yash ghawghawe", "yash"))
-				.thenReturn(null);
+		when(userRepository.findByUsernameAndPassword("yash ghawghawe", "yash")).thenReturn(null);
 
 		// then or outcome
 		loginDTO.setUsername("yash ghawghawe");

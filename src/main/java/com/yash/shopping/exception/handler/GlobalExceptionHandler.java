@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.yash.shopping.dto.MessageResposne;
-import com.yash.shopping.exception.CategoryNotFoundException;
 import com.yash.shopping.exception.InsufficientBalanceException;
 import com.yash.shopping.exception.InvalidCredentialsException;
 import com.yash.shopping.exception.InvalidUserIdException;
@@ -58,16 +57,6 @@ public class GlobalExceptionHandler {
 	}
 
 	/**
-	 * @param CategoryNotFoundException
-	 *            e
-	 * @return ResponseEntity<MessageResposne>
-	 */
-	@ExceptionHandler(CategoryNotFoundException.class)
-	public ResponseEntity<MessageResposne> handleCategoryNotFoundException(CategoryNotFoundException e) {
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResposne("Product Not Found"));
-	}
-
-	/**
 	 * @param TransactionFailedException
 	 *            e
 	 * @return ResponseEntity<MessageResposne>
@@ -76,7 +65,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<MessageResposne> handleTransactionFailedException(TransactionFailedException e) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResposne("Transaction Failed"));
 	}
-	
+
 	@ExceptionHandler(InsufficientBalanceException.class)
 	public ResponseEntity<MessageResposne> handleInsufficientBalanceException(InsufficientBalanceException e) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResposne("Balance is low for purchase"));
@@ -91,7 +80,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
 		Map<String, String> errors = new HashMap<>();
-		ex.getBindingResult().getAllErrors().forEach((error) -> {
+		ex.getBindingResult().getAllErrors().forEach(error -> {
 			String fieldName = ((FieldError) error).getField();
 			String errorMessage = error.getDefaultMessage();
 			errors.put(fieldName, errorMessage);
