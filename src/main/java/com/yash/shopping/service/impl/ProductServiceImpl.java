@@ -51,7 +51,8 @@ public class ProductServiceImpl implements ProductService {
 				logger.info("product Not Found");
 				throw new ProductNotFoundException("product not found");
 			}
-			products = productRepository.findByCategoryId(category.getCategoryId());
+			//products = productRepository.findByCategoryId(category.getCategoryId());
+			products = category.getProducts();
 		}
 		ProductResponseDTO productResponseDTO = new ProductResponseDTO();
 

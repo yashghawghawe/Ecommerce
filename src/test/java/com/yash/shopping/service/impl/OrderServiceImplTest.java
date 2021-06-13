@@ -102,7 +102,7 @@ public class OrderServiceImplTest {
 
 		product = new Product(product -> {
 			product.setProductName("Redmi Note 9");
-			product.setCategoryId(1);
+			//product.setCategoryId(1);
 			product.setQuantity(100);
 			product.setAmount(10000);
 		});

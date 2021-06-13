@@ -29,7 +29,6 @@ public class Product {
 	private String productName;
 	private double amount;
 	private int quantity;
-	private long categoryId;
 	
 	public Product(Consumer<Product> builder) {
 		builder.accept(this);

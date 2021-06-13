@@ -49,7 +49,7 @@ public class ProductServiceImplTest {
 			pro.setProductName("redmi note 9");
 			pro.setAmount(10000);
 			pro.setQuantity(100);
-			pro.setCategoryId(1);
+			//pro.setCategoryId(1);
 		});
 
 		products.add(product);
